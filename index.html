@@ -1,613 +1,732 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hou-Sheng SHEN — Portfolio</title>
+<title>Howie's Life OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://apis.google.com/js/api.js" async defer></script>
 <style>
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:      #07070a;
+  --surf:    #0f0f14;
+  --surf2:   #17171e;
+  --surf3:   #1e1e27;
+  --border:  rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --text:    #f0ede8;
+  --muted:   #6b6870;
+  --accent:  #c8ff57;
+  --accent2: #57d9ff;
+  --accent3: #ff6b6b;
+  --green:   #57ffb8;
+  --amber:   #ffb830;
+  --f-disp:  'Syne', sans-serif;
+  --f-mono:  'DM Mono', monospace;
+  --f-body:  'DM Sans', sans-serif;
+}
+html,body{height:100%;overflow:hidden;-webkit-font-smoothing:antialiased;font-family:var(--f-body);background:var(--bg);color:var(--text);font-size:14px}
+#app{display:flex;height:100vh}
 
-  :root {
-    --bg: #07070a;
-    --surface: #0f0f14;
-    --surface2: #17171e;
-    --border: rgba(255,255,255,0.07);
-    --border2: rgba(255,255,255,0.13);
-    --text: #f0ede8;
-    --muted: #6b6870;
-    --accent: #c8ff57;
-    --accent2: #57d9ff;
-    --accent3: #ff6b6b;
-    --font-display: 'Syne', sans-serif;
-    --font-mono: 'DM Mono', monospace;
-    --font-body: 'DM Sans', sans-serif;
-  }
+/* ── SIDEBAR ── */
+#sidebar{
+  width:220px;min-width:220px;
+  background:var(--surf);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  flex-shrink:0;
+}
+#logo{
+  padding:20px 16px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+  flex-shrink:0;
+}
+.lmark{
+  width:32px;height:32px;
+  background:var(--accent);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--f-disp);font-size:15px;font-weight:800;color:var(--bg);
+  flex-shrink:0;
+}
+.ltxt .ln{font-family:var(--f-disp);font-size:14px;font-weight:800;color:var(--text);letter-spacing:-.01em}
+.ltxt .ls{font-size:10px;color:rgba(200,255,87,.4);font-family:var(--f-mono);margin-top:1px;letter-spacing:.06em}
 
-  html { scroll-behavior: smooth; }
+nav{padding:8px 8px;flex:1;overflow-y:auto}
+.ng{font-size:9px;font-family:var(--f-mono);color:rgba(255,255,255,.2);letter-spacing:.12em;padding:12px 8px 4px;text-transform:uppercase}
+.ni{
+  display:flex;align-items:center;gap:9px;
+  padding:8px 10px;border-radius:6px;
+  cursor:pointer;color:var(--muted);font-size:12.5px;font-weight:500;
+  transition:all .15s;margin-bottom:1px;user-select:none;letter-spacing:.01em;
+  font-family:var(--f-body);
+}
+.ni:hover{background:var(--surf2);color:var(--text)}
+.ni.active{background:rgba(200,255,87,.08);color:var(--accent);border:1px solid rgba(200,255,87,.12)}
+.ni-ic{width:15px;height:15px;flex-shrink:0;opacity:.5;display:flex;align-items:center;justify-content:center}
+.ni.active .ni-ic{opacity:1}
+.nbadge{margin-left:auto;background:var(--accent3);color:#fff;font-size:9px;font-family:var(--f-mono);padding:1px 6px;border-radius:20px;display:none}
+.ni.active .nbadge,.ni:hover .nbadge{display:inline}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 16px;
-    line-height: 1.6;
-    overflow-x: hidden;
-    cursor: none;
-  }
+#sb-foot{padding:10px 8px;border-top:1px solid var(--border);flex-shrink:0}
+.srow{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;font-size:11px;font-family:var(--f-mono);color:var(--muted);cursor:pointer;transition:background .15s;margin-bottom:3px}
+.srow:hover{background:var(--surf2)}
+.sdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.15);flex-shrink:0}
+.sdot.on{background:var(--accent);box-shadow:0 0 6px rgba(200,255,87,.5)}
 
-  /* CURSOR */
-  .cursor {
-    width: 10px; height: 10px;
-    background: var(--accent);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    transition: transform 0.15s ease, background 0.2s;
-    transform: translate(-50%, -50%);
-  }
-  .cursor-ring {
-    width: 36px; height: 36px;
-    border: 1px solid rgba(200,255,87,0.4);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9998;
-    transition: transform 0.35s cubic-bezier(0.18,0.89,0.32,1.2), width 0.3s, height 0.3s, border-color 0.2s;
-    transform: translate(-50%, -50%);
-  }
-  .cursor-ring.expand { width: 60px; height: 60px; border-color: rgba(200,255,87,0.7); }
+/* ── MAIN ── */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
 
-  /* NAV */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1.5rem 4rem;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.3s, background 0.3s;
-  }
-  nav.scrolled { border-color: var(--border); background: rgba(7,7,10,0.85); backdrop-filter: blur(12px); }
-  .nav-logo { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; letter-spacing: -0.02em; color: var(--text); text-decoration: none; }
-  .nav-logo span { color: var(--accent); }
-  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
-  .nav-links a { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
-  .nav-links a:hover { color: var(--accent); }
-  .nav-cta {
-    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase;
-    background: var(--accent); color: #07070a; padding: 0.5rem 1.25rem; border-radius: 2px;
-    text-decoration: none; font-weight: 500; transition: opacity 0.2s;
-  }
-  .nav-cta:hover { opacity: 0.85; }
+/* TODAY BAR */
+#tbar{
+  height:36px;flex-shrink:0;
+  background:var(--surf);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 24px;gap:0;overflow:hidden;
+}
+#tdate{font-size:11px;font-family:var(--f-mono);color:var(--muted);margin-right:18px;white-space:nowrap;flex-shrink:0;letter-spacing:.03em}
+.tchip{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text);padding:2px 10px;border-radius:20px;margin-right:7px;background:rgba(200,255,87,.08);border:1px solid rgba(200,255,87,.15);white-space:nowrap;flex-shrink:0;font-family:var(--f-mono)}
 
-  /* HERO */
-  #hero {
-    min-height: 100vh;
-    display: flex; flex-direction: column; justify-content: flex-end;
-    padding: 0 4rem 5rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero-grid-bg {
-    position: absolute; inset: 0;
-    background-image:
-      linear-gradient(rgba(200,255,87,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(200,255,87,0.03) 1px, transparent 1px);
-    background-size: 80px 80px;
-    pointer-events: none;
-  }
-  .hero-glow {
-    position: absolute; top: -30%; right: -10%;
-    width: 70vw; height: 70vw; max-width: 800px; max-height: 800px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(200,255,87,0.06) 0%, transparent 65%);
-    pointer-events: none;
-  }
-  .hero-tag {
-    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--accent); margin-bottom: 1.5rem;
-    display: flex; align-items: center; gap: 0.75rem;
-  }
-  .hero-tag::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent); }
-  .hero-name {
-    font-family: var(--font-display); font-weight: 800;
-    font-size: clamp(4rem, 10vw, 9rem); line-height: 0.9;
-    letter-spacing: -0.03em; color: var(--text);
-    margin-bottom: 2rem;
-  }
-  .hero-name .outline { -webkit-text-stroke: 1px rgba(240,237,232,0.3); color: transparent; }
-  .hero-sub {
-    display: flex; align-items: flex-end; justify-content: space-between;
-    gap: 2rem;
-  }
-  .hero-desc { font-size: 1.1rem; color: var(--muted); max-width: 520px; line-height: 1.7; }
-  .hero-desc strong { color: var(--text); font-weight: 400; }
-  .hero-stats { display: flex; gap: 3rem; }
-  .stat { text-align: right; }
-  .stat-num { font-family: var(--font-display); font-size: 2.5rem; font-weight: 800; color: var(--accent); line-height: 1; }
-  .stat-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
-  .scroll-hint {
-    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
-    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
-    font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
-  }
-  .scroll-line { width: 1px; height: 40px; background: linear-gradient(var(--muted), transparent); animation: scrollDown 1.8s ease-in-out infinite; }
-  @keyframes scrollDown { 0%,100%{transform:scaleY(0);transform-origin:top} 50%{transform:scaleY(1);transform-origin:top} }
+/* PAGES */
+.page{display:none;flex-direction:column;flex:1;overflow:hidden}
+.page.active{display:flex}
 
-  /* SECTION BASE */
-  section { padding: 7rem 4rem; }
-  .section-header { margin-bottom: 4rem; }
-  .section-num {
-    font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--accent); margin-bottom: 0.75rem;
-  }
-  .section-title {
-    font-family: var(--font-display); font-weight: 800;
-    font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 0.95; letter-spacing: -0.03em;
-  }
-  .divider { width: 100%; height: 1px; background: var(--border); }
+/* PAGE HEADER */
+.ph{
+  padding:22px 28px 16px;
+  border-bottom:1px solid var(--border);
+  background:var(--surf);
+  display:flex;align-items:flex-end;gap:16px;
+  flex-shrink:0;
+}
+.ph-left{flex:1}
+.ptitle{font-family:var(--f-disp);font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.02em;line-height:1}
+.ptitle span{color:var(--accent)}
+.psub{font-size:11px;color:var(--muted);margin-top:5px;font-family:var(--f-mono);letter-spacing:.03em}
+.pa{display:flex;gap:8px;align-items:center;padding-bottom:2px}
+.pb{padding:20px 24px;flex:1;overflow-y:auto}
 
-  /* ABOUT */
-  #about { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
-  .about-text p { font-size: 1.15rem; line-height: 1.8; color: rgba(240,237,232,0.7); margin-bottom: 1.5rem; }
-  .about-text p strong { color: var(--text); font-weight: 400; }
-  .about-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
-  .pill {
-    font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
-    border: 1px solid var(--border2); color: var(--muted); padding: 0.4rem 0.9rem; border-radius: 999px;
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .pill:hover { border-color: var(--accent); color: var(--accent); }
-  .about-card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
-    padding: 2.5rem; position: relative; overflow: hidden;
-  }
-  .about-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); }
-  .lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
-  .lang-item { }
-  .lang-name { font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; margin-bottom: 0.25rem; }
-  .lang-level { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-  .lang-bar-track { height: 2px; background: var(--border2); margin-top: 0.5rem; border-radius: 1px; overflow: hidden; }
-  .lang-bar { height: 100%; background: var(--accent); border-radius: 1px; transition: width 1s cubic-bezier(0.4,0,0.2,1); width: 0; }
+/* BUTTONS */
+.btn{font-family:var(--f-body);font-size:12.5px;font-weight:500;padding:7px 14px;border-radius:4px;border:1px solid var(--border2);background:var(--surf2);color:var(--text);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{background:var(--surf3);border-color:rgba(255,255,255,.2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:600}
+.btn.primary:hover{background:#b8ef47;box-shadow:0 0 16px rgba(200,255,87,.25)}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--muted)}
+.btn.ghost:hover{background:var(--surf2);color:var(--text)}
+.btn.danger{border-color:rgba(255,107,107,.2);color:var(--accent3);background:transparent}
+.btn.danger:hover{background:rgba(255,107,107,.08)}
+.btn.sm{font-size:11.5px;padding:5px 10px}
+.btn.xs{font-size:10px;padding:3px 8px;font-family:var(--f-mono)}
 
-  /* EXPERIENCE */
-  #experience { background: var(--surface); }
-  .exp-list { display: flex; flex-direction: column; gap: 0; }
-  .exp-item {
-    display: grid; grid-template-columns: 180px 1fr;
-    gap: 3rem; padding: 3rem 0; border-bottom: 1px solid var(--border);
-    position: relative; overflow: hidden;
-    transition: background 0.3s;
-  }
-  .exp-item:last-child { border-bottom: none; }
-  .exp-item::before {
-    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
-    background: var(--accent); transform: scaleY(0); transform-origin: top;
-    transition: transform 0.4s ease;
-  }
-  .exp-item:hover::before { transform: scaleY(1); }
-  .exp-item:hover { background: rgba(200,255,87,0.02); }
-  .exp-left { }
-  .exp-date { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
-  .exp-company { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; color: var(--accent); }
-  .exp-location { font-family: var(--font-mono); font-size: 0.65rem; color: var(--muted); margin-top: 0.25rem; }
-  .exp-right { }
-  .exp-title { font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
-  .exp-type { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.25rem; }
-  .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
-  .exp-bullets li { font-size: 0.95rem; color: rgba(240,237,232,0.65); line-height: 1.6; padding-left: 1.25rem; position: relative; }
-  .exp-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-size: 0.75rem; top: 3px; }
-  .exp-highlight { display: inline; background: rgba(200,255,87,0.1); color: var(--accent); padding: 1px 6px; border-radius: 2px; font-weight: 500; font-size: 0.9em; }
+/* STAT CARDS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-bottom:20px;border-radius:8px;overflow:hidden}
+.scard{background:var(--surf);padding:18px 20px;transition:background .15s;cursor:default}
+.scard:hover{background:var(--surf2)}
+.snum{font-family:var(--f-disp);font-size:38px;font-weight:800;line-height:1;letter-spacing:-.04em;margin-bottom:5px}
+.slabel{font-size:10px;color:var(--muted);font-family:var(--f-mono);letter-spacing:.08em;text-transform:uppercase}
 
-  /* EDUCATION */
-  #education { }
-  .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-  .edu-card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
-    padding: 2.5rem; position: relative; overflow: hidden; transition: border-color 0.3s;
-  }
-  .edu-card:hover { border-color: var(--border2); }
-  .edu-card.featured { border-color: rgba(200,255,87,0.3); }
-  .edu-card.featured::after { content: 'Current'; position: absolute; top: 1.5rem; right: 1.5rem; font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); background: rgba(200,255,87,0.1); padding: 0.25rem 0.6rem; border-radius: 2px; }
-  .edu-school { font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
-  .edu-degree { font-size: 0.95rem; color: rgba(240,237,232,0.6); margin-bottom: 0.25rem; }
-  .edu-period { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.5rem; }
-  .edu-detail { font-size: 0.9rem; color: rgba(240,237,232,0.5); line-height: 1.6; }
-  .edu-gpa { font-family: var(--font-display); font-size: 3rem; font-weight: 800; color: var(--accent); line-height: 1; margin-top: 1.5rem; }
-  .edu-gpa-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+/* TAGS */
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;font-family:var(--f-mono);letter-spacing:.03em}
+.tag.accent{background:rgba(200,255,87,.1);color:var(--accent);border:1px solid rgba(200,255,87,.2)}
+.tag.green{background:rgba(87,255,184,.08);color:var(--green)}
+.tag.amber{background:rgba(255,184,48,.08);color:var(--amber)}
+.tag.red{background:rgba(255,107,107,.08);color:var(--accent3)}
+.tag.blue{background:rgba(87,217,255,.08);color:var(--accent2)}
+.tag.muted{background:var(--surf2);color:var(--muted);border:1px solid var(--border)}
 
-  /* SKILLS */
-  #skills { background: var(--surface); }
-  .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
-  .skill-group { }
-  .skill-group-title {
-    font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--accent); margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);
-  }
-  .skill-items { display: flex; flex-direction: column; gap: 0.75rem; }
-  .skill-item { display: flex; align-items: center; justify-content: space-between; }
-  .skill-name { font-size: 0.95rem; color: rgba(240,237,232,0.8); }
-  .skill-dots { display: flex; gap: 4px; }
-  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); }
-  .dot.filled { background: var(--accent); }
-  .cert-list { margin-top: 3rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-  .cert-item {
-    background: var(--surface2); border: 1px solid var(--border); border-radius: 4px;
-    padding: 1.25rem; transition: border-color 0.2s;
-  }
-  .cert-item:hover { border-color: var(--border2); }
-  .cert-issuer { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
-  .cert-name { font-size: 0.9rem; font-weight: 400; color: var(--text); line-height: 1.4; }
-  .cert-year { font-family: var(--font-mono); font-size: 0.65rem; color: var(--muted); margin-top: 0.4rem; }
+/* TABLE */
+.dtable{width:100%;border-collapse:collapse;background:var(--surf);border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.dtable th{font-size:9px;font-family:var(--f-mono);color:var(--muted);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border2);letter-spacing:.08em;background:var(--surf2);text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--text)}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tbody tr:hover td{background:rgba(255,255,255,.02)}
 
-  /* CONTACT */
-  #contact { text-align: center; position: relative; overflow: hidden; }
-  .contact-glow { position: absolute; bottom: -40%; left: 50%; transform: translateX(-50%); width: 60vw; height: 60vw; max-width: 700px; max-height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(87,217,255,0.05) 0%, transparent 65%); pointer-events: none; }
-  .contact-big { font-family: var(--font-display); font-weight: 800; font-size: clamp(3rem, 8vw, 7rem); letter-spacing: -0.03em; line-height: 0.95; margin-bottom: 2rem; }
-  .contact-big span { color: var(--accent2); }
-  .contact-desc { font-size: 1.1rem; color: var(--muted); max-width: 480px; margin: 0 auto 3rem; }
-  .contact-links { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
-  .contact-link {
-    display: flex; align-items: center; gap: 0.75rem;
-    font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.05em;
-    border: 1px solid var(--border2); color: var(--text); padding: 0.85rem 1.75rem; border-radius: 2px;
-    text-decoration: none; transition: border-color 0.2s, color 0.2s, background 0.2s;
-  }
-  .contact-link:hover { border-color: var(--accent); color: var(--accent); }
-  .contact-link.primary { background: var(--accent); color: #07070a; border-color: var(--accent); }
-  .contact-link.primary:hover { background: transparent; color: var(--accent); }
+/* ITEMS */
+.item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;border:1px solid transparent;transition:all .12s}
+.item:hover{background:var(--surf2);border-color:var(--border)}
+.item.done .ilabel{text-decoration:line-through;color:var(--muted)}
+.icb{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.icb:hover{border-color:var(--accent)}
+.icb.chk{background:var(--accent);border-color:var(--accent)}
+.icb.chk::after{content:'';width:5px;height:8px;border:1.5px solid var(--bg);border-top:none;border-left:none;transform:rotate(45deg);margin-top:-2px}
+.ilabel{font-size:12.5px;flex:1;color:var(--text);font-weight:400}
+.imeta{font-size:10px;color:var(--muted);font-family:var(--f-mono)}
+.iact{display:none;gap:4px}
+.item:hover .iact{display:flex}
+.pdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.pdot.high{background:var(--accent3)}.pdot.med{background:var(--amber)}.pdot.low{background:var(--muted)}
 
-  /* FOOTER */
-  footer { padding: 2rem 4rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-  footer p { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; color: var(--muted); }
+/* CALENDAR */
+.calnav{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.caltitle{font-family:var(--f-disp);font-size:20px;font-weight:800;flex:1;letter-spacing:-.02em}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.cdh{background:var(--surf2);text-align:center;padding:9px 4px;font-size:9px;font-family:var(--f-mono);color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.cday{background:var(--surf);min-height:88px;padding:8px;cursor:pointer;transition:background .1s}
+.cday:hover{background:var(--surf2)}
+.cday.other{background:var(--bg);opacity:.5}
+.cday.today{background:rgba(200,255,87,.05);outline:1px solid rgba(200,255,87,.2)}
+.cday.today .dn{color:var(--accent)}
+.dn{font-size:11px;font-family:var(--f-mono);color:var(--muted);margin-bottom:3px}
+.cevt{font-size:10px;padding:2px 5px;border-radius:3px;margin-bottom:2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-family:var(--f-mono)}
+.cevt.google{background:rgba(87,217,255,.1);color:var(--accent2)}
+.cevt.apple{background:rgba(255,184,48,.1);color:var(--amber)}
+.cevt.local{background:rgba(200,255,87,.1);color:var(--accent)}
+.cevt.reminder{background:rgba(87,255,184,.1);color:var(--green)}
 
-  /* ANIMATE */
-  .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
-  .fade-up.visible { opacity: 1; transform: none; }
+/* KANBAN */
+.kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-items:start}
+.kbh{display:flex;align-items:center;gap:7px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.kbtit{font-family:var(--f-mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;flex:1}
+.kbct{font-size:10px;font-family:var(--f-mono);color:var(--muted);background:var(--surf2);padding:1px 7px;border-radius:20px;border:1px solid var(--border)}
+.kbcards{display:flex;flex-direction:column;gap:8px}
+.kbcard{background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:13px;cursor:pointer;transition:all .15s}
+.kbcard:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.kbcname{font-size:12.5px;font-weight:600;margin-bottom:4px;color:var(--text)}
+.kbcdesc{font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.5}
+.kbcft{display:flex;align-items:center;gap:6px}
+.kbcdate{font-size:10px;font-family:var(--f-mono);color:var(--muted)}
+.kbdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 
-  @media (max-width: 900px) {
-    nav { padding: 1.25rem 2rem; }
-    .nav-links { display: none; }
-    #hero { padding: 0 2rem 4rem; }
-    section { padding: 5rem 2rem; }
-    #about { grid-template-columns: 1fr; gap: 3rem; }
-    .edu-grid { grid-template-columns: 1fr; }
-    .skills-grid { grid-template-columns: 1fr; }
-    .cert-list { grid-template-columns: 1fr; }
-    .exp-item { grid-template-columns: 1fr; gap: 1rem; }
-    .hero-sub { flex-direction: column; align-items: flex-start; }
-    .hero-stats { gap: 2rem; }
-    footer { padding: 1.5rem 2rem; flex-direction: column; gap: 0.5rem; text-align: center; }
-  }
+/* COURSES */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.ccrd{background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:18px;transition:all .18s;position:relative;overflow:hidden}
+.ccrd::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.ccrd:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.4)}
+.cname{font-family:var(--f-disp);font-size:18px;font-weight:800;margin-bottom:2px;letter-spacing:-.02em;margin-top:8px}
+.cprof{font-size:11px;color:var(--muted);margin-bottom:12px;font-family:var(--f-mono)}
+.progwrap{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.progbar{flex:1;height:3px;background:var(--border2);border-radius:2px;overflow:hidden}
+.progfill{height:100%;border-radius:2px;transition:width .5s ease}
+.proglbl{font-size:10px;font-family:var(--f-mono);color:var(--muted);white-space:nowrap}
+.ctask{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);font-size:11.5px;color:var(--muted)}
+.ctask:last-child{border-bottom:none}
+
+/* PIPELINE */
+.pipeline{display:flex;gap:1px;margin-bottom:22px;background:var(--border);border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.pstage{flex:1;text-align:center;padding:12px 6px;background:var(--surf);cursor:pointer;transition:background .15s}
+.pstage:hover{background:var(--surf2)}
+.psname{font-size:9px;font-family:var(--f-mono);color:var(--muted);margin-bottom:4px;letter-spacing:.1em;text-transform:uppercase}
+.psn{font-family:var(--f-disp);font-size:26px;font-weight:800;color:rgba(255,255,255,.1);letter-spacing:-.04em;line-height:1}
+.psn.live{color:var(--text)}
+
+/* REMINDERS */
+.remgrid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.remsect{font-family:var(--f-disp);font-size:14px;font-weight:800;color:var(--text);margin-bottom:12px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.remrow{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:8px;background:var(--surf);border:1px solid var(--border);margin-bottom:8px;transition:all .12s}
+.remrow:hover{border-color:var(--border2);background:var(--surf2)}
+.remica{font-size:17px;flex-shrink:0}
+.remname{font-size:12.5px;font-weight:500;flex:1;color:var(--text)}
+.remfreq{font-size:10px;color:var(--muted);font-family:var(--f-mono)}
+.remact{display:none;gap:6px}
+.remrow:hover .remact{display:flex}
+
+/* SECTION LABELS */
+.sl{font-size:9px;font-weight:500;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;font-family:var(--f-mono);display:flex;align-items:center;gap:8px}
+.sl::after{content:'';flex:1;height:1px;background:var(--border)}
+.divider{height:1px;background:var(--border2);margin:20px 0}
+
+/* MODAL */
+.moverlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(8px);z-index:100;display:none;align-items:center;justify-content:center}
+.moverlay.open{display:flex;animation:fi .15s ease}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.modal{background:var(--surf);border:1px solid var(--border2);border-radius:12px;width:480px;max-width:95vw;max-height:88vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.6);animation:su .2s ease}
+@keyframes su{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+.mhd{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mtitle{font-family:var(--f-disp);font-size:17px;font-weight:800;color:var(--text);letter-spacing:-.01em}
+.mx{background:none;border:none;color:var(--muted);font-size:17px;cursor:pointer;padding:3px 7px;border-radius:4px;transition:all .15s}
+.mx:hover{color:var(--text);background:var(--surf2)}
+.mbd{padding:18px 22px}
+.mft{padding:12px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+
+/* FORMS */
+.fg{margin-bottom:13px}
+.fl{display:block;font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.06em;margin-bottom:5px;font-family:var(--f-mono);text-transform:uppercase}
+.fi,.fs,.fta{width:100%;background:var(--surf2);border:1px solid var(--border2);color:var(--text);font-family:var(--f-body);font-size:13px;padding:8px 11px;border-radius:6px;outline:none;transition:border-color .15s,box-shadow .15s}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(200,255,87,.08)}
+.fs{cursor:pointer}
+.fta{resize:vertical;min-height:78px;line-height:1.6}
+.frow{display:flex;gap:11px}
+.frow .fg{flex:1}
+
+/* SETTINGS */
+.ssect{background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.shd{padding:13px 18px;border-bottom:1px solid var(--border);font-family:var(--f-disp);font-size:14px;font-weight:700;color:var(--muted);letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.sbd{padding:18px}
+.ibox{padding:11px 13px;border-radius:6px;background:var(--bg);border-left:2px solid var(--accent);font-size:11px;font-family:var(--f-mono);color:var(--muted);line-height:1.8;margin-top:12px}
+
+/* EMPTY */
+.empty{text-align:center;padding:36px 20px;color:var(--muted);font-size:12.5px}
+.ei{font-size:28px;margin-bottom:8px;opacity:.4}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surf3);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--border2)}
+
+/* DASH */
+.dbody{display:grid;grid-template-columns:1fr 298px;gap:18px}
+.dmain{min-width:0}.dside{min-width:0}
+
+/* PAGE ANIM */
+.pb>*{animation:pf .2s ease}
+@keyframes pf{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
+<div id="app">
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-
-<nav id="navbar">
-  <a class="nav-logo" href="#">HS<span>.</span></a>
-  <ul class="nav-links">
-    <li><a href="#about">About</a></li>
-    <li><a href="#experience">Experience</a></li>
-    <li><a href="#education">Education</a></li>
-    <li><a href="#skills">Skills</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-  <a class="nav-cta" href="mailto:hou_sheng.shen@edu.escp.eu">Hire Me</a>
-</nav>
-
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-grid-bg"></div>
-  <div class="hero-glow"></div>
-  <div class="hero-tag">Available for opportunities</div>
-  <h1 class="hero-name">
-    Hou-Sheng<br>
-    <span class="outline">SHEN</span>
-  </h1>
-  <div class="hero-sub">
-    <p class="hero-desc">
-      <strong>BSc Management student at ESCP Paris.</strong><br>
-      Bridging analytical rigor with creative strategy — from AI model evaluation to retail operations. Based in Paris, rooted in Taiwan.
-    </p>
-    <div class="hero-stats">
-      <div class="stat">
-        <div class="stat-num">3.89</div>
-        <div class="stat-label">GPA</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">4</div>
-        <div class="stat-label">Languages</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">3+</div>
-        <div class="stat-label">Certifications</div>
-      </div>
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <div id="logo">
+    <div class="lmark">H</div>
+    <div class="ltxt">
+      <div class="ln">Life OS</div>
+      <div class="ls">howie · v2025</div>
     </div>
   </div>
-  <div class="scroll-hint">
-    <span>Scroll</span>
-    <div class="scroll-line"></div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ABOUT -->
-<section id="about">
-  <div class="about-text fade-up">
-    <div class="section-header">
-      <div class="section-num">01 — About</div>
-      <h2 class="section-title">Analytical.<br>Proactive.<br>Curious.</h2>
+  <nav>
+    <div class="ng">Overview</div>
+    <div class="ni active" onclick="gp('dashboard',this)">
+      <div class="ni-ic"><svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg></div>
+      Dashboard
     </div>
-    <p>I'm a <strong>BSc Management student at ESCP Business School in Paris</strong>, having transferred from Soochow University in Taipei after one year. My path sits at the intersection of business strategy, data, and technology.</p>
-    <p>At Outlier (Scale AI), I evaluate and optimize LLM outputs — working directly on AI alignment and dataset quality. Previously, I drove a <strong>15% YoY sales growth</strong> as the youngest intern supervisor at Far Eastern Department Stores.</p>
-    <p>I thrive in environments where precision meets creativity, and where cross-cultural fluency is an asset rather than just a line on a résumé.</p>
-    <div class="about-pills">
-      <span class="pill">AI Evaluation</span>
-      <span class="pill">Business Strategy</span>
-      <span class="pill">Data Analysis</span>
-      <span class="pill">Operations</span>
-      <span class="pill">Cross-Cultural</span>
-      <span class="pill">SQL / BigQuery</span>
-      <span class="pill">R Programming</span>
+    <div class="ni" onclick="gp('calendar',this)">
+      <div class="ni-ic"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="11" rx="2"/><path d="M5 1v4M11 1v4M1 7h14"/></svg></div>
+      Calendar
     </div>
+    <div class="ng">Manage</div>
+    <div class="ni" onclick="gp('projects',this)">
+      <div class="ni-ic"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="14" height="10" rx="2"/><path d="M5 4V3a2 2 0 014 0v1"/></svg></div>
+      Projects
+    </div>
+    <div class="ni" onclick="gp('todos',this)">
+      <div class="ni-ic"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M3 8h10M3 12h6"/></svg></div>
+      To-Do
+      <span class="nbadge" id="tbadge">0</span>
+    </div>
+    <div class="ni" onclick="gp('courses',this)">
+      <div class="ni-ic"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1L1 5l7 4 7-4-7-4zM1 10l7 4 7-4"/></svg></div>
+      Courses
+    </div>
+    <div class="ng">Track</div>
+    <div class="ni" onclick="gp('internships',this)">
+      <div class="ni-ic"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M1.5 14s0-4.5 6.5-4.5 6.5 4.5 6.5 4.5"/></svg></div>
+      Internships
+    </div>
+    <div class="ni" onclick="gp('reminders',this)">
+      <div class="ni-ic"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1a5.5 5.5 0 015.5 5.5c0 3 1.5 4.5 1.5 4.5H1S2.5 9.5 2.5 6.5A5.5 5.5 0 018 1z"/><path d="M6 13.5a2 2 0 004 0"/></svg></div>
+      Reminders
+    </div>
+    <div class="ng">System</div>
+    <div class="ni" onclick="gp('settings',this)">
+      <div class="ni-ic"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/></svg></div>
+      Settings
+    </div>
+  </nav>
+  <div id="sb-foot">
+    <div class="srow" onclick="gp('settings',document.querySelector('[onclick*=settings]'))"><div class="sdot" id="gdot"></div><span id="glbl">Google Calendar</span></div>
+    <div class="srow" onclick="gp('settings',document.querySelector('[onclick*=settings]'))"><div class="sdot" id="adot"></div><span id="albl">Apple Calendar</span></div>
   </div>
-  <div class="fade-up" style="animation-delay:0.15s">
-    <div class="about-card">
-      <div class="section-num" style="margin-bottom:1.5rem">Languages</div>
-      <div class="lang-grid">
-        <div class="lang-item">
-          <div class="lang-name">Mandarin</div>
-          <div class="lang-level">Native</div>
-          <div class="lang-bar-track"><div class="lang-bar" data-width="100%"></div></div>
-        </div>
-        <div class="lang-item">
-          <div class="lang-name">Taiwanese</div>
-          <div class="lang-level">Native</div>
-          <div class="lang-bar-track"><div class="lang-bar" data-width="100%"></div></div>
-        </div>
-        <div class="lang-item">
-          <div class="lang-name">English</div>
-          <div class="lang-level">C1 — Professional</div>
-          <div class="lang-bar-track"><div class="lang-bar" data-width="90%"></div></div>
-        </div>
-        <div class="lang-item">
-          <div class="lang-name">French</div>
-          <div class="lang-level">A2 — Elementary</div>
-          <div class="lang-bar-track"><div class="lang-bar" data-width="30%"></div></div>
-        </div>
-        <div class="lang-item">
-          <div class="lang-name">Italian</div>
-          <div class="lang-level">A1 — Beginner</div>
-          <div class="lang-bar-track"><div class="lang-bar" data-width="15%"></div></div>
+</aside>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="tbar">
+    <div id="tdate">—</div>
+    <div id="tchips" style="display:flex;overflow:hidden"></div>
+    <div style="margin-left:auto;font-family:var(--f-mono);font-size:9px;color:rgba(200,255,87,.3);letter-spacing:.1em">HOWIE'S LIFE OS</div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="ph">
+      <div class="ph-left">
+        <div class="ptitle" id="dgreeting">Good morning, <span>Howie.</span></div>
+        <div class="psub" id="ddate">—</div>
+      </div>
+    </div>
+    <div class="pb">
+      <div class="stats" id="dstats"></div>
+      <div class="dbody">
+        <div class="dmain"><div class="sl">Pending tasks</div><div id="dtodos"></div></div>
+        <div class="dside">
+          <div class="sl">Reminders</div><div id="drems"></div>
+          <div class="divider"></div>
+          <div class="sl">Internship funnel</div><div id="dfunnel"></div>
         </div>
       </div>
     </div>
   </div>
-</section>
 
-<div class="divider"></div>
-
-<!-- EXPERIENCE -->
-<section id="experience">
-  <div class="section-header fade-up">
-    <div class="section-num">02 — Experience</div>
-    <h2 class="section-title">Work &<br>Impact</h2>
-  </div>
-  <div class="exp-list">
-
-    <div class="exp-item fade-up">
-      <div class="exp-left">
-        <div class="exp-date">Jan 2025 — Present</div>
-        <div class="exp-company">Outlier</div>
-        <div class="exp-location">Remote · Freelance</div>
-      </div>
-      <div class="exp-right">
-        <div class="exp-title">AI Data Evaluation &<br>Quality Specialist</div>
-        <div class="exp-type">Scale AI, Inc.</div>
-        <ul class="exp-bullets">
-          <li>Evaluated and optimized LLM outputs to ensure alignment with safety, reasoning accuracy, and instruction-following standards — directly contributing to high-precision dataset refinement.</li>
-          <li>Facilitated contributor workshops and webinars to clarify project objectives and evaluation metrics for new contributors.</li>
-          <li>Collaborated with cross-functional quality teams to resolve ambiguous cases and perform detailed error analysis on systematic model issues.</li>
-        </ul>
+  <!-- CALENDAR -->
+  <div class="page" id="page-calendar">
+    <div class="ph">
+      <div class="ph-left"><div class="ptitle">Cal<span>endar</span></div><div class="psub">Google · Apple · Local events</div></div>
+      <div class="pa">
+        <span class="tag blue">Google</span><span class="tag amber">Apple</span><span class="tag accent">Local</span><span class="tag green">Reminders</span>
+        <button class="btn primary" onclick="om('mev')">+ Event</button>
       </div>
     </div>
-
-    <div class="exp-item fade-up">
-      <div class="exp-left">
-        <div class="exp-date">Sep 2024 — Jun 2025</div>
-        <div class="exp-company">Soochow University</div>
-        <div class="exp-location">Taipei, Taiwan · Part-time</div>
+    <div class="pb">
+      <div class="calnav">
+        <button class="btn ghost" onclick="cprev()">← Prev</button>
+        <div class="caltitle" id="callbl">—</div>
+        <button class="btn ghost" onclick="cnext()">Next →</button>
+        <button class="btn" onclick="ctoday()">Today</button>
       </div>
-      <div class="exp-right">
-        <div class="exp-title">Teaching Assistant &<br>Mandarin Program Volunteer</div>
-        <div class="exp-type">Leadership & Involvement</div>
-        <ul class="exp-bullets">
-          <li>Improved international students' learning outcomes through structured tutoring, progress monitoring, and cross-cultural event planning.</li>
-          <li>Enhanced instructional efficiency by coordinating classroom operations and optimizing volunteer roles, significantly reducing faculty preparation time.</li>
-          <li>Designed and executed cultural and academic events, managing logistics and budgets for consistent student participation.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="exp-item fade-up">
-      <div class="exp-left">
-        <div class="exp-date">Jan 2023 — Aug 2023</div>
-        <div class="exp-company">Far Eastern Group</div>
-        <div class="exp-location">Hsinchu, Taiwan · Internship</div>
-      </div>
-      <div class="exp-right">
-        <div class="exp-title">Sales Operations &<br>Floor Supervisor — Intern</div>
-        <div class="exp-type">Far Eastern Department Stores Co., Ltd.</div>
-        <ul class="exp-bullets">
-          <li>Selected as the <span class="exp-highlight">youngest intern supervisor</span> — primary liaison between marketing, inventory, and operations teams.</li>
-          <li>Drove <span class="exp-highlight">15% YoY sales growth</span> during Mother's Day peak via a weekly yoga engagement series, increasing store visits by ~20% and visitor-to-buyer conversion by ~8%.</li>
-          <li>Leveraged sales data and behavioral insights to guide merchandising execution and optimize floor strategy.</li>
-        </ul>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- EDUCATION -->
-<section id="education">
-  <div class="section-header fade-up">
-    <div class="section-num">03 — Education</div>
-    <h2 class="section-title">Academic<br>Journey</h2>
-  </div>
-  <div class="edu-grid">
-    <div class="edu-card featured fade-up">
-      <div class="edu-school">ESCP<br>Business School</div>
-      <div class="edu-degree">B.S. in Management</div>
-      <div class="edu-period">2025 — 2028 · Paris, France</div>
-      <div class="edu-detail">One of Europe's oldest and most prestigious business schools, with campuses across six cities. Rigorous international management programme combining strategy, finance, and entrepreneurship.</div>
-    </div>
-    <div class="edu-card fade-up" style="transition-delay:0.1s">
-      <div class="edu-school">Soochow<br>University</div>
-      <div class="edu-degree">B.B.A. in International Business & Trade</div>
-      <div class="edu-period">Aug 2024 — Jun 2025 · Taipei, Taiwan</div>
-      <div class="edu-detail">Transferred to ESCP after one year. Led workshops on English proficiency test preparation (GEPT, TOEIC, DET) and was active in cross-cultural academic initiatives.</div>
-      <div class="edu-gpa">3.89</div>
-      <div class="edu-gpa-label">Grade Point Average</div>
+      <div class="calgrid" id="calgrid"></div>
     </div>
   </div>
-</section>
 
-<div class="divider"></div>
-
-<!-- SKILLS -->
-<section id="skills">
-  <div class="section-header fade-up">
-    <div class="section-num">04 — Skills</div>
-    <h2 class="section-title">Tools &<br>Expertise</h2>
+  <!-- PROJECTS -->
+  <div class="page" id="page-projects">
+    <div class="ph">
+      <div class="ph-left"><div class="ptitle">Pro<span>jects</span></div><div class="psub" id="projsub">—</div></div>
+      <div class="pa"><button class="btn primary" onclick="om('mproj')">+ New Project</button></div>
+    </div>
+    <div class="pb"><div class="kanban" id="kanban"></div></div>
   </div>
-  <div class="skills-grid">
-    <div class="skill-group fade-up">
-      <div class="skill-group-title">Technical</div>
-      <div class="skill-items">
-        <div class="skill-item"><span class="skill-name">SQL / BigQuery</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
-        <div class="skill-item"><span class="skill-name">R Programming</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div></div>
-        <div class="skill-item"><span class="skill-name">Microsoft Office 365</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
-        <div class="skill-item"><span class="skill-name">Notion</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
-        <div class="skill-item"><span class="skill-name">WordPress</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
-        <div class="skill-item"><span class="skill-name">Canva</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+
+  <!-- TODOS -->
+  <div class="page" id="page-todos">
+    <div class="ph">
+      <div class="ph-left"><div class="ptitle">To-<span>Do</span></div><div class="psub" id="todosub">—</div></div>
+      <div class="pa">
+        <select class="fs" style="width:130px" id="tfilter" onchange="renderTodos()">
+          <option value="all">All tasks</option><option value="pending">Pending</option><option value="done">Done</option><option value="high">High priority</option>
+        </select>
+        <button class="btn primary" onclick="om('mtodo')">+ Add Task</button>
       </div>
     </div>
-    <div class="skill-group fade-up" style="transition-delay:0.1s">
-      <div class="skill-group-title">Business</div>
-      <div class="skill-items">
-        <div class="skill-item"><span class="skill-name">AI Evaluation & Alignment</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
-        <div class="skill-item"><span class="skill-name">Sales Operations</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
-        <div class="skill-item"><span class="skill-name">Data Analysis</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
-        <div class="skill-item"><span class="skill-name">Team Leadership</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
-        <div class="skill-item"><span class="skill-name">SEO</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div></div>
-        <div class="skill-item"><span class="skill-name">Social Media Marketing</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div></div>
-      </div>
+    <div class="pb"><div id="todolist"></div></div>
+  </div>
+
+  <!-- COURSES -->
+  <div class="page" id="page-courses">
+    <div class="ph">
+      <div class="ph-left"><div class="ptitle">Cour<span>ses</span></div><div class="psub" id="coursesub">—</div></div>
+      <div class="pa"><button class="btn primary" onclick="om('mcourse')">+ Add Course</button></div>
     </div>
-    <div class="skill-group fade-up" style="transition-delay:0.2s">
-      <div class="skill-group-title">Soft Skills</div>
-      <div class="skill-items">
-        <div class="skill-item"><span class="skill-name">Cross-Cultural Communication</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
-        <div class="skill-item"><span class="skill-name">Critical Thinking</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
-        <div class="skill-item"><span class="skill-name">Workshop Facilitation</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
-        <div class="skill-item"><span class="skill-name">Budget Management</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div></div>
-        <div class="skill-item"><span class="skill-name">Stakeholder Management</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+    <div class="pb"><div class="cgrid" id="cgrid"></div></div>
+  </div>
+
+  <!-- INTERNSHIPS -->
+  <div class="page" id="page-internships">
+    <div class="ph">
+      <div class="ph-left"><div class="ptitle">Intern<span>ships</span></div><div class="psub">Application tracker</div></div>
+      <div class="pa"><button class="btn primary" onclick="om('mintern')">+ Add Application</button></div>
+    </div>
+    <div class="pb">
+      <div class="pipeline" id="pipeline"></div>
+      <table class="dtable">
+        <thead><tr><th>Company</th><th>Role</th><th>Location</th><th>Stage</th><th>Deadline</th><th>Notes</th><th></th></tr></thead>
+        <tbody id="itbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- REMINDERS -->
+  <div class="page" id="page-reminders">
+    <div class="ph">
+      <div class="ph-left"><div class="ptitle">Remin<span>ders</span></div><div class="psub">Weekly &amp; monthly recurring events</div></div>
+      <div class="pa"><button class="btn primary" onclick="om('mrem')">+ Add Reminder</button></div>
+    </div>
+    <div class="pb">
+      <div class="remgrid">
+        <div><div class="remsect"><span class="tag accent">Weekly</span></div><div id="remw"></div></div>
+        <div><div class="remsect"><span class="tag green">Monthly</span></div><div id="remm"></div></div>
       </div>
     </div>
   </div>
 
-  <div class="cert-list fade-up">
-    <div class="cert-item">
-      <div class="cert-issuer">Google</div>
-      <div class="cert-name">SQL — Data with BigQuery</div>
-      <div class="cert-year">2026</div>
-    </div>
-    <div class="cert-item">
-      <div class="cert-issuer">IBM</div>
-      <div class="cert-name">Make Agentic AI Work for You</div>
-      <div class="cert-year">2025</div>
-    </div>
-    <div class="cert-item">
-      <div class="cert-issuer">Cambridge University</div>
-      <div class="cert-name">Cambridge C1 — CAE</div>
-      <div class="cert-year">2025</div>
-    </div>
-    <div class="cert-item">
-      <div class="cert-issuer">LinkedIn</div>
-      <div class="cert-name">Generative AI, Recruiting & Talent Acquisition</div>
-      <div class="cert-year">2026</div>
-    </div>
-    <div class="cert-item">
-      <div class="cert-issuer">ETS</div>
-      <div class="cert-name">TOEIC</div>
-      <div class="cert-year">2023</div>
+  <!-- SETTINGS -->
+  <div class="page" id="page-settings">
+    <div class="ph"><div class="ph-left"><div class="ptitle">Set<span>tings</span></div></div></div>
+    <div class="pb">
+      <div class="ssect">
+        <div class="shd">Google Calendar</div>
+        <div class="sbd">
+          <div class="frow">
+            <div class="fg"><label class="fl">Client ID (OAuth 2.0)</label><input type="text" class="fi" id="gcid" placeholder="xxxx.apps.googleusercontent.com" oninput="sgc()"></div>
+            <div class="fg"><label class="fl">API Key</label><input type="text" class="fi" id="gapikey" placeholder="AIzaSy..." oninput="sgc()"></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
+            <button class="btn primary" onclick="connectGoogle()">Connect Google</button>
+            <span id="gstatus" style="font-size:11px;color:var(--muted);font-family:var(--f-mono)"></span>
+          </div>
+          <div class="ibox">Google Cloud Console → APIs &amp; Services → Enable Calendar API<br>Credentials → OAuth 2.0 Client ID (Web App) → Authorized origins: <code>file://</code></div>
+        </div>
+      </div>
+      <div class="ssect">
+        <div class="shd">Apple Calendar (.ics Import)</div>
+        <div class="sbd">
+          <div class="fg">
+            <label class="fl">macOS Calendar → right-click → Export → .ics file</label>
+            <input type="file" accept=".ics" id="icsfile" onchange="importICS(event)" style="display:none">
+            <button class="btn" onclick="document.getElementById('icsfile').click()">Choose .ics File</button>
+            <span id="astatus" style="font-size:11px;color:var(--muted);font-family:var(--f-mono);margin-left:12px"></span>
+          </div>
+          <div class="ibox" style="border-left-color:var(--amber)">Browser CORS prevents direct CalDAV — .ics export from macOS Calendar is the reliable method.</div>
+        </div>
+      </div>
+      <div class="ssect">
+        <div class="shd">Data Management</div>
+        <div class="sbd">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn" onclick="exportData()">Export JSON</button>
+            <button class="btn" onclick="document.getElementById('ijson').click()">Import JSON</button>
+            <button class="btn danger" onclick="clearAll()">Clear all data</button>
+          </div>
+          <input type="file" id="ijson" accept=".json" style="display:none" onchange="importData(event)">
+        </div>
+      </div>
     </div>
   </div>
-</section>
+</div>
+</div>
 
-<div class="divider"></div>
-
-<!-- CONTACT -->
-<section id="contact">
-  <div class="contact-glow"></div>
-  <div class="contact-big fade-up">Let's<br><span>Connect</span></div>
-  <p class="contact-desc fade-up">Open to internships, part-time roles, and interesting conversations. Based in Paris — available globally.</p>
-  <div class="contact-links fade-up">
-    <a class="contact-link primary" href="mailto:hou_sheng.shen@edu.escp.eu">
-      ✉ hou_sheng.shen@edu.escp.eu
-    </a>
-    <a class="contact-link" href="https://www.linkedin.com/in/hou-sheng-shen-b60972392/" target="_blank">
-      ↗ LinkedIn
-    </a>
-    <a class="contact-link" href="tel:+33602772483">
-      ✆ +33 6 02 77 24 83
-    </a>
+<!-- MODALS -->
+<div class="moverlay" id="mproj"><div class="modal">
+  <div class="mhd"><div class="mtitle">New Project</div><button class="mx" onclick="cm('mproj')">✕</button></div>
+  <div class="mbd">
+    <div class="fg"><label class="fl">Project name</label><input type="text" class="fi" id="pname" placeholder="Project title"></div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Status</label><select class="fs" id="pstatus"><option value="backlog">Backlog</option><option value="progress">In Progress</option><option value="review">Review</option><option value="done">Done</option></select></div>
+      <div class="fg"><label class="fl">Due date</label><input type="date" class="fi" id="pdue"></div>
+    </div>
+    <div class="fg"><label class="fl">Description</label><textarea class="fta" id="pdesc" placeholder="Brief description..."></textarea></div>
   </div>
-</section>
+  <div class="mft"><button class="btn" onclick="cm('mproj')">Cancel</button><button class="btn primary" onclick="saveProj()">Save</button></div>
+</div></div>
 
-<footer>
-  <p>© 2026 Hou-Sheng SHEN</p>
-  <p>BSc in Management · ESCP Business School · Paris</p>
-</footer>
+<div class="moverlay" id="mtodo"><div class="modal">
+  <div class="mhd"><div class="mtitle">New Task</div><button class="mx" onclick="cm('mtodo')">✕</button></div>
+  <div class="mbd">
+    <div class="fg"><label class="fl">Task name</label><input type="text" class="fi" id="tname" placeholder="What needs to be done?"></div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Priority</label><select class="fs" id="tpriority"><option value="high">High</option><option value="med" selected>Medium</option><option value="low">Low</option></select></div>
+      <div class="fg"><label class="fl">Due date</label><input type="date" class="fi" id="tdue"></div>
+    </div>
+    <div class="fg"><label class="fl">Category</label><select class="fs" id="tcat"><option value="">None</option><option value="courses">Courses</option><option value="internships">Internships</option><option value="projects">Projects</option><option value="personal">Personal</option></select></div>
+  </div>
+  <div class="mft"><button class="btn" onclick="cm('mtodo')">Cancel</button><button class="btn primary" onclick="saveTodo()">Save</button></div>
+</div></div>
+
+<div class="moverlay" id="mcourse"><div class="modal">
+  <div class="mhd"><div class="mtitle">Add Course</div><button class="mx" onclick="cm('mcourse')">✕</button></div>
+  <div class="mbd">
+    <div class="fg"><label class="fl">Course name</label><input type="text" class="fi" id="cname" placeholder="Corporate Finance, Marketing..."></div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Professor</label><input type="text" class="fi" id="cprof" placeholder="Prof. Name"></div>
+      <div class="fg"><label class="fl">Credits</label><input type="number" class="fi" id="ccredits" placeholder="3" min="1" max="10"></div>
+    </div>
+    <div class="fg"><label class="fl">Color</label><select class="fs" id="ccolor"><option value="#c8ff57">Lime</option><option value="#57d9ff">Cyan</option><option value="#ffb830">Amber</option><option value="#ff6b6b">Red</option><option value="#57ffb8">Green</option><option value="#c084fc">Violet</option></select></div>
+  </div>
+  <div class="mft"><button class="btn" onclick="cm('mcourse')">Cancel</button><button class="btn primary" onclick="saveCourse()">Save</button></div>
+</div></div>
+
+<div class="moverlay" id="mctask"><div class="modal">
+  <div class="mhd"><div class="mtitle">Add Assignment</div><button class="mx" onclick="cm('mctask')">✕</button></div>
+  <div class="mbd">
+    <input type="hidden" id="ctcid">
+    <div class="fg"><label class="fl">Name</label><input type="text" class="fi" id="ctname" placeholder="Midterm, HW1, Report..."></div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Due date</label><input type="date" class="fi" id="ctdue"></div>
+      <div class="fg"><label class="fl">Status</label><select class="fs" id="ctstatus"><option value="pending">Pending</option><option value="done">Done</option></select></div>
+    </div>
+  </div>
+  <div class="mft"><button class="btn" onclick="cm('mctask')">Cancel</button><button class="btn primary" onclick="saveCTask()">Save</button></div>
+</div></div>
+
+<div class="moverlay" id="mintern"><div class="modal">
+  <div class="mhd"><div class="mtitle">Add Application</div><button class="mx" onclick="cm('mintern')">✕</button></div>
+  <div class="mbd">
+    <div class="frow">
+      <div class="fg"><label class="fl">Company</label><input type="text" class="fi" id="icompany" placeholder="Google, LVMH..."></div>
+      <div class="fg"><label class="fl">Role</label><input type="text" class="fi" id="irole" placeholder="Finance Intern"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Location</label><input type="text" class="fi" id="iloc" placeholder="Paris / Remote"></div>
+      <div class="fg"><label class="fl">Stage</label><select class="fs" id="istage"><option value="wishlist">Wishlist</option><option value="applied">Applied</option><option value="oa">OA / Test</option><option value="interview">Interview</option><option value="offer">Offer</option><option value="rejected">Rejected</option></select></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Deadline</label><input type="date" class="fi" id="ideadline"></div>
+      <div class="fg"><label class="fl">URL</label><input type="url" class="fi" id="iurl" placeholder="https://..."></div>
+    </div>
+    <div class="fg"><label class="fl">Notes</label><textarea class="fta" id="inotes" placeholder="Referral, contact..."></textarea></div>
+  </div>
+  <div class="mft"><button class="btn" onclick="cm('mintern')">Cancel</button><button class="btn primary" onclick="saveIntern()">Save</button></div>
+</div></div>
+
+<div class="moverlay" id="mrem"><div class="modal">
+  <div class="mhd"><div class="mtitle">Add Reminder</div><button class="mx" onclick="cm('mrem')">✕</button></div>
+  <div class="mbd">
+    <div class="fg"><label class="fl">Name</label><input type="text" class="fi" id="rname" placeholder="房租, 水電費, 諮商..."></div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Frequency</label><select class="fs" id="rfreq" onchange="updRDay()"><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></div>
+      <div class="fg"><label class="fl" id="rdaylbl">Day of Week</label><select class="fs" id="rday"><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday</option><option value="0">Sunday</option></select></div>
+    </div>
+    <div class="fg"><label class="fl">Icon</label><input type="text" class="fi" id="ricon" placeholder="🏠 💡 🧠 💊" maxlength="4"></div>
+  </div>
+  <div class="mft"><button class="btn" onclick="cm('mrem')">Cancel</button><button class="btn primary" onclick="saveRem()">Save</button></div>
+</div></div>
+
+<div class="moverlay" id="mev"><div class="modal">
+  <div class="mhd"><div class="mtitle">Add Event</div><button class="mx" onclick="cm('mev')">✕</button></div>
+  <div class="mbd">
+    <div class="fg"><label class="fl">Title</label><input type="text" class="fi" id="evtitle" placeholder="Event name"></div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Date</label><input type="date" class="fi" id="evdate"></div>
+      <div class="fg"><label class="fl">Time</label><input type="time" class="fi" id="evtime"></div>
+    </div>
+  </div>
+  <div class="mft"><button class="btn" onclick="cm('mev')">Cancel</button><button class="btn primary" onclick="saveEv()">Save</button></div>
+</div></div>
 
 <script>
-  // Custom cursor
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  let mx = 0, my = 0, rx = 0, ry = 0;
-  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx + 'px'; cursor.style.top = my + 'px'; });
-  (function animRing() { rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; requestAnimationFrame(animRing); })();
-  document.querySelectorAll('a, button, .pill, .exp-item, .edu-card, .cert-item').forEach(el => {
-    el.addEventListener('mouseenter', () => ring.classList.add('expand'));
-    el.addEventListener('mouseleave', () => ring.classList.remove('expand'));
-  });
+let S={todos:[],projects:[],courses:[],internships:[],reminders:[],events:[],googleEvents:[],appleEvents:[],gOK:false,aOK:false};
+const DR=[{id:uid(),name:'房租',freq:'monthly',day:1,icon:'🏠'},{id:uid(),name:'水電費',freq:'monthly',day:5,icon:'💡'},{id:uid(),name:'諮商',freq:'weekly',day:3,icon:'🧠'}];
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function save(){localStorage.setItem('h_os5',JSON.stringify(S))}
+function load(){const d=localStorage.getItem('h_os5');if(d){try{S={...S,...JSON.parse(d)}}catch{}}else{S.reminders=DR;save()}}
+function gp(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(el)el.classList.add('active');
+  ({dashboard:renderDash,calendar:renderCal,projects:renderProj,todos:renderTodos,courses:renderCourses,internships:renderIntern,reminders:renderRem}[id]||function(){})();
+}
+function om(id){document.getElementById(id).classList.add('open')}
+function cm(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.moverlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
 
-  // Nav scroll
-  const nav = document.getElementById('navbar');
-  window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 60); });
-
-  // Intersection observer fade-up
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
-
-  // Language bars animate on visibility
-  const barObs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.querySelectorAll('.lang-bar').forEach(bar => { bar.style.width = bar.dataset.width; });
-        barObs.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.3 });
-  document.querySelectorAll('.about-card').forEach(el => barObs.observe(el));
+function renderBar(){
+  const n=new Date(),d=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('tdate').textContent=d[n.getDay()]+', '+mo[n.getMonth()]+' '+n.getDate()+' '+n.getFullYear();
+  const tr=S.reminders.filter(r=>r.freq==='weekly'?parseInt(r.day)===n.getDay():parseInt(r.day)===n.getDate());
+  document.getElementById('tchips').innerHTML=tr.map(r=>`<div class="tchip">${r.icon||'🔔'} ${r.name}</div>`).join('');
+}
+function renderDash(){
+  const n=new Date(),h=n.getHours();
+  document.getElementById('dgreeting').innerHTML=(h<12?'Good morning':h<18?'Good afternoon':'Good evening')+', <span>Howie.</span>';
+  document.getElementById('ddate').textContent=n.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const pend=S.todos.filter(t=>!t.done).length,ap=S.projects.filter(p=>p.status!=='done').length;
+  document.getElementById('dstats').innerHTML=[
+    {n:pend,l:'Pending tasks',c:'var(--accent)'},{n:ap,l:'Active projects',c:'var(--accent2)'},
+    {n:S.internships.length,l:'Applications',c:'var(--amber)'},{n:S.courses.length,l:'Courses',c:'var(--green)'}
+  ].map(s=>`<div class="scard"><div class="snum" style="color:${s.c}">${s.n}</div><div class="slabel">${s.l}</div></div>`).join('');
+  const pt=S.todos.filter(t=>!t.done).slice(0,6);
+  document.getElementById('dtodos').innerHTML=pt.length===0?`<div class="empty"><div class="ei">✓</div>All caught up!</div>`:pt.map(tItem).join('');
+  document.getElementById('drems').innerHTML=S.reminders.slice(0,5).map(r=>`<div class="remrow" style="margin-bottom:6px"><span class="remica">${r.icon||'🔔'}</span><span class="remname">${r.name}</span><span class="tag ${r.freq==='weekly'?'accent':'green'}" style="font-size:9px">${r.freq}</span></div>`).join('');
+  const sc={wishlist:{l:'Wishlist',c:'var(--muted)'},applied:{l:'Applied',c:'var(--amber)'},oa:{l:'OA',c:'var(--accent)'},interview:{l:'Interview',c:'var(--accent2)'},offer:{l:'Offer',c:'var(--green)'}};
+  document.getElementById('dfunnel').innerHTML=['wishlist','applied','oa','interview','offer'].map(s=>{const n2=S.internships.filter(i=>i.stage===s).length;return`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--muted);font-family:var(--f-mono)">${sc[s].l}</span><span style="font-family:var(--f-disp);font-size:20px;font-weight:800;letter-spacing:-.04em;color:${n2>0?sc[s].c:'rgba(255,255,255,.1)'}">${n2}</span></div>`}).join('');
+  updBadge();
+}
+let CD=new Date();
+const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function renderCal(){
+  document.getElementById('callbl').textContent=MN[CD.getMonth()]+' '+CD.getFullYear();
+  const yr=CD.getFullYear(),mo=CD.getMonth(),fd=new Date(yr,mo,1).getDay(),dim=new Date(yr,mo+1,0).getDate(),td=new Date();
+  let h=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="cdh">${d}</div>`).join('');
+  const pv=new Date(yr,mo,0).getDate();
+  for(let i=fd-1;i>=0;i--)h+=`<div class="cday other"><div class="dn">${pv-i}</div></div>`;
+  for(let d=1;d<=dim;d++){
+    const ds=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const it=d===td.getDate()&&mo===td.getMonth()&&yr===td.getFullYear();
+    const ev=[...S.googleEvents.filter(e=>e.date===ds).map(e=>({...e,src:'google'})),...S.appleEvents.filter(e=>e.date===ds).map(e=>({...e,src:'apple'})),...S.events.filter(e=>e.date===ds).map(e=>({...e,src:'local'}))];
+    const rv=S.reminders.filter(r=>r.freq==='weekly'?parseInt(r.day)===new Date(yr,mo,d).getDay():parseInt(r.day)===d);
+    h+=`<div class="cday${it?' today':''}" onclick="openCD('${ds}')"><div class="dn">${d}</div>${ev.map(e=>`<div class="cevt ${e.src}">${e.title}</div>`).join('')}${rv.map(r=>`<div class="cevt reminder">${r.icon||'🔔'} ${r.name}</div>`).join('')}</div>`;
+  }
+  const r2=7-((fd+dim)%7);if(r2<7)for(let i=1;i<=r2;i++)h+=`<div class="cday other"><div class="dn">${i}</div></div>`;
+  document.getElementById('calgrid').innerHTML=h;
+}
+function cprev(){CD=new Date(CD.getFullYear(),CD.getMonth()-1,1);renderCal()}
+function cnext(){CD=new Date(CD.getFullYear(),CD.getMonth()+1,1);renderCal()}
+function ctoday(){CD=new Date();renderCal()}
+function openCD(ds){om('mev');document.getElementById('evdate').value=ds}
+function saveEv(){const t=document.getElementById('evtitle').value.trim(),d=document.getElementById('evdate').value;if(!t||!d)return;S.events.push({id:uid(),title:t,date:d,time:document.getElementById('evtime').value});save();cm('mev');document.getElementById('evtitle').value='';renderCal()}
+const PS=['backlog','progress','review','done'],PC={
+  backlog:{l:'Backlog',c:'var(--muted)',dot:'rgba(255,255,255,.2)'},
+  progress:{l:'In Progress',c:'var(--amber)',dot:'#ffb830'},
+  review:{l:'Review',c:'var(--accent2)',dot:'#57d9ff'},
+  done:{l:'Done',c:'var(--green)',dot:'#57ffb8'}
+};
+function renderProj(){
+  document.getElementById('projsub').textContent=`${S.projects.length} total · ${S.projects.filter(p=>p.status!=='done').length} active`;
+  document.getElementById('kanban').innerHTML=PS.map(s=>{
+    const it=S.projects.filter(p=>p.status===s),c=PC[s];
+    return`<div><div class="kbh"><div class="kbdot" style="background:${c.dot}"></div><span class="kbtit" style="color:${c.c}">${c.l}</span><span class="kbct">${it.length}</span></div><div class="kbcards">${it.length===0?`<div style="padding:16px;background:var(--surf);border-radius:8px;border:1px dashed var(--border2);text-align:center;font-size:12px;color:rgba(255,255,255,.15)">Empty</div>`:it.map(p=>`<div class="kbcard"><div class="kbcname">${p.name}</div>${p.desc?`<div class="kbcdesc">${p.desc.slice(0,80)}${p.desc.length>80?'...':''}</div>`:''}<div class="kbcft">${p.due?`<span class="kbcdate">Due ${p.due}</span>`:''}<div style="margin-left:auto;display:flex;gap:4px"><button class="btn xs" onclick="mvP('${p.id}')">Move →</button><button class="btn xs danger" onclick="dlP('${p.id}')">✕</button></div></div></div>`).join('')}</div></div>`;
+  }).join('');
+}
+function saveProj(){const n=document.getElementById('pname').value.trim();if(!n)return;S.projects.push({id:uid(),name:n,status:document.getElementById('pstatus').value,due:document.getElementById('pdue').value,desc:document.getElementById('pdesc').value});save();cm('mproj');['pname','pdue','pdesc'].forEach(id=>document.getElementById(id).value='');renderProj()}
+function mvP(id){const p=S.projects.find(x=>x.id===id);if(!p)return;const i=PS.indexOf(p.status);p.status=PS[(i+1)%PS.length];save();renderProj()}
+function dlP(id){S.projects=S.projects.filter(p=>p.id!==id);save();renderProj()}
+function tItem(t){return`<div class="item${t.done?' done':''}"><div class="pdot ${t.priority||'low'}"></div><div class="icb ${t.done?'chk':''}" onclick="togT('${t.id}')"></div><div class="ilabel">${t.name}</div>${t.cat?`<span class="tag muted" style="font-size:10px">${t.cat}</span>`:''  }${t.due?`<div class="imeta">${t.due}</div>`:''}<div class="iact"><button class="btn xs danger" onclick="dlT('${t.id}')">✕</button></div></div>`}
+function renderTodos(){
+  const f=document.getElementById('tfilter')?.value||'all';let it=[...S.todos];
+  if(f==='pending')it=it.filter(t=>!t.done);else if(f==='done')it=it.filter(t=>t.done);else if(f==='high')it=it.filter(t=>t.priority==='high');
+  const pend=S.todos.filter(t=>!t.done).length;
+  const sub=document.getElementById('todosub');if(sub)sub.textContent=`${pend} pending · ${S.todos.length} total`;
+  const list=document.getElementById('todolist');if(list)list.innerHTML=it.length===0?`<div class="empty"><div class="ei">✓</div>No tasks.</div>`:it.map(tItem).join('');
+  updBadge();
+}
+function saveTodo(){const n=document.getElementById('tname').value.trim();if(!n)return;S.todos.push({id:uid(),name:n,priority:document.getElementById('tpriority').value,due:document.getElementById('tdue').value,cat:document.getElementById('tcat').value,done:false});save();cm('mtodo');document.getElementById('tname').value='';renderTodos()}
+function togT(id){const t=S.todos.find(x=>x.id===id);if(t){t.done=!t.done;save();renderTodos()}}
+function dlT(id){S.todos=S.todos.filter(t=>t.id!==id);save();renderTodos()}
+function updBadge(){const n=S.todos.filter(t=>!t.done).length;const b=document.getElementById('tbadge');b.textContent=n;b.style.display=n===0?'none':'inline'}
+function renderCourses(){
+  const sub=document.getElementById('coursesub');if(sub)sub.textContent=`${S.courses.length} courses`;
+  const g=document.getElementById('cgrid');if(!g)return;
+  g.innerHTML=S.courses.length===0?`<div class="empty" style="grid-column:1/-1"><div class="ei">📚</div>Add your first course.</div>`:S.courses.map(c=>{
+    const tk=c.tasks||[],dn=tk.filter(t=>t.status==='done').length,pct=tk.length?Math.round(dn/tk.length*100):0;
+    return`<div class="ccrd"><div class="ccrd::before" style="display:none"></div><div style="position:absolute;top:0;left:0;right:0;height:3px;background:${c.color||'#c8ff57'}"></div><div class="cname" style="color:${c.color||'#c8ff57'}">${c.name}</div><div class="cprof">${c.prof||'—'} · ${c.credits||'?'} credits</div><div class="progwrap"><div class="progbar"><div class="progfill" style="width:${pct}%;background:${c.color||'#c8ff57'}"></div></div><div class="proglbl">${dn}/${tk.length} · ${pct}%</div></div><div>${tk.slice(0,4).map(t=>`<div class="ctask"><div class="icb ${t.status==='done'?'chk':''}" style="width:14px;height:14px;flex-shrink:0" onclick="togCT('${c.id}','${t.id}')"></div><span style="flex:1">${t.name}</span>${t.due?`<span style="font-size:10px;color:var(--muted)">${t.due}</span>`:''}</div>`).join('')}${tk.length>4?`<div style="font-size:11px;color:var(--muted);padding:5px 0;font-family:var(--f-mono)">+${tk.length-4} more</div>`:''}</div><div style="display:flex;gap:8px;margin-top:12px"><button class="btn sm" onclick="openCT('${c.id}')">+ Assignment</button><button class="btn sm danger" onclick="dlC('${c.id}')">Delete</button></div></div>`;
+  }).join('');
+}
+function saveCourse(){const n=document.getElementById('cname').value.trim();if(!n)return;S.courses.push({id:uid(),name:n,prof:document.getElementById('cprof').value,credits:document.getElementById('ccredits').value,color:document.getElementById('ccolor').value,tasks:[]});save();cm('mcourse');document.getElementById('cname').value='';renderCourses()}
+function dlC(id){if(!confirm('Delete?'))return;S.courses=S.courses.filter(c=>c.id!==id);save();renderCourses()}
+function openCT(cid){document.getElementById('ctcid').value=cid;document.getElementById('ctname').value='';om('mctask')}
+function saveCTask(){const cid=document.getElementById('ctcid').value,n=document.getElementById('ctname').value.trim();if(!n)return;const c=S.courses.find(x=>x.id===cid);if(!c)return;if(!c.tasks)c.tasks=[];c.tasks.push({id:uid(),name:n,due:document.getElementById('ctdue').value,status:document.getElementById('ctstatus').value});save();cm('mctask');renderCourses()}
+function togCT(cid,tid){const c=S.courses.find(x=>x.id===cid);if(!c)return;const t=c.tasks?.find(x=>x.id===tid);if(t){t.status=t.status==='done'?'pending':'done';save();renderCourses()}}
+const IS={wishlist:{l:'Wishlist',c:'var(--muted)'},applied:{l:'Applied',c:'var(--amber)'},oa:{l:'OA / Test',c:'var(--accent)'},interview:{l:'Interview',c:'var(--accent2)'},offer:{l:'Offer',c:'var(--green)'},rejected:{l:'Rejected',c:'var(--accent3)'}};
+const IO=['wishlist','applied','oa','interview','offer','rejected'];
+function renderIntern(){
+  document.getElementById('pipeline').innerHTML=['wishlist','applied','oa','interview','offer'].map(s=>{const n=S.internships.filter(i=>i.stage===s).length;return`<div class="pstage"><div class="psname">${IS[s].l}</div><div class="psn ${n>0?'live':''}" style="${n>0?'color:'+IS[s].c:''}">${n}</div></div>`}).join('');
+  document.getElementById('itbody').innerHTML=S.internships.length===0?`<tr><td colspan="7" class="empty" style="padding:24px">No applications yet. Start your search 🚀</td></tr>`:S.internships.map(i=>{const c=IS[i.stage]||IS.wishlist;return`<tr><td style="font-weight:500">${i.company}${i.url?` <a href="${i.url}" target="_blank" style="color:var(--accent2);font-size:11px">↗</a>`:''}</td><td>${i.role||'—'}</td><td>${i.loc||'—'}</td><td><span class="tag muted">${c.l}</span></td><td style="font-family:var(--f-mono);font-size:11px;color:var(--muted)">${i.deadline||'—'}</td><td style="color:var(--muted);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${i.notes||'—'}</td><td><div style="display:flex;gap:4px"><button class="btn xs" onclick="advI('${i.id}')">→</button><button class="btn xs danger" onclick="dlI('${i.id}')">✕</button></div></td></tr>`}).join('');
+}
+function saveIntern(){const c=document.getElementById('icompany').value.trim();if(!c)return;S.internships.push({id:uid(),company:c,role:document.getElementById('irole').value,loc:document.getElementById('iloc').value,stage:document.getElementById('istage').value,deadline:document.getElementById('ideadline').value,url:document.getElementById('iurl').value,notes:document.getElementById('inotes').value});save();cm('mintern');['icompany','irole','iloc','ideadline','iurl','inotes'].forEach(id=>document.getElementById(id).value='');renderIntern()}
+function advI(id){const i=S.internships.find(x=>x.id===id);if(!i)return;const idx=IO.indexOf(i.stage);if(idx<IO.length-1){i.stage=IO[idx+1];save();renderIntern()}}
+function dlI(id){S.internships=S.internships.filter(i=>i.id!==id);save();renderIntern()}
+const DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function renderRem(){
+  const w=S.reminders.filter(r=>r.freq==='weekly'),m=S.reminders.filter(r=>r.freq==='monthly');
+  const row=r=>`<div class="remrow"><span class="remica">${r.icon||'🔔'}</span><div style="flex:1"><div class="remname">${r.name}</div><div class="remfreq">${r.freq==='weekly'?'Every '+DOW[r.day]:'Day '+r.day+' of month'}</div></div><div class="remact"><button class="btn xs danger" onclick="dlR('${r.id}')">✕</button></div></div>`;
+  document.getElementById('remw').innerHTML=w.length===0?`<div class="empty" style="padding:16px">None yet.</div>`:w.map(row).join('');
+  document.getElementById('remm').innerHTML=m.length===0?`<div class="empty" style="padding:16px">None yet.</div>`:m.map(row).join('');
+}
+function saveRem(){const n=document.getElementById('rname').value.trim();if(!n)return;S.reminders.push({id:uid(),name:n,freq:document.getElementById('rfreq').value,day:parseInt(document.getElementById('rday').value),icon:document.getElementById('ricon').value||'🔔'});save();cm('mrem');document.getElementById('rname').value='';renderRem();renderBar()}
+function dlR(id){S.reminders=S.reminders.filter(r=>r.id!==id);save();renderRem();renderBar()}
+function updRDay(){const f=document.getElementById('rfreq').value,sel=document.getElementById('rday'),lbl=document.getElementById('rdaylbl');if(f==='weekly'){lbl.textContent='Day of Week';sel.innerHTML=[['1','Monday'],['2','Tuesday'],['3','Wednesday'],['4','Thursday'],['5','Friday'],['6','Saturday'],['0','Sunday']].map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}else{lbl.textContent='Day of Month';sel.innerHTML=Array.from({length:28},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join('')}}
+function sgc(){localStorage.setItem('gci',document.getElementById('gcid').value);localStorage.setItem('gak',document.getElementById('gapikey').value)}
+function connectGoogle(){const ci=localStorage.getItem('gci')||document.getElementById('gcid').value,ak=localStorage.getItem('gak')||document.getElementById('gapikey').value;if(!ci||!ak){alert('Enter Client ID and API Key first.');return}if(typeof gapi==='undefined'){document.getElementById('gstatus').textContent='Google API not loaded.';return}gapi.load('client:auth2',()=>{gapi.client.init({apiKey:ak,clientId:ci,discoveryDocs:['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],scope:'https://www.googleapis.com/auth/calendar.readonly'}).then(()=>{const a=gapi.auth2.getAuthInstance();if(a.isSignedIn.get())onGIn();else a.signIn().then(onGIn).catch(()=>{document.getElementById('gstatus').textContent='Cancelled.'})}).catch(e=>{document.getElementById('gstatus').textContent='Error: '+(e.details||e.message)})})}
+function onGIn(){S.gOK=true;save();document.getElementById('gdot').classList.add('on');document.getElementById('glbl').textContent='Google · Connected';document.getElementById('gstatus').textContent='Fetching...';const tm=new Date();tm.setMonth(tm.getMonth()-1);const tx=new Date();tx.setMonth(tx.getMonth()+3);gapi.client.calendar.events.list({calendarId:'primary',timeMin:tm.toISOString(),timeMax:tx.toISOString(),singleEvents:true,maxResults:250,orderBy:'startTime'}).then(r=>{S.googleEvents=(r.result.items||[]).map(e=>({id:e.id,title:e.summary||'(No title)',date:(e.start.dateTime||e.start.date||'').slice(0,10)}));save();document.getElementById('gstatus').textContent=`${S.googleEvents.length} events`;if(document.getElementById('page-calendar').classList.contains('active'))renderCal()})}
+function importICS(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const evs=parseICS(e.target.result);S.appleEvents=evs;S.aOK=true;save();document.getElementById('adot').classList.add('on');document.getElementById('albl').textContent=`Apple · ${evs.length} events`;document.getElementById('astatus').textContent=`Imported ${evs.length} events`;if(document.getElementById('page-calendar').classList.contains('active'))renderCal()};r.readAsText(f)}
+function parseICS(data){const ev=[];const bl=data.split('BEGIN:VEVENT');for(let i=1;i<bl.length;i++){const b=bl[i],sm=(b.match(/SUMMARY:(.*)/)?.[1]||'').trim(),dt=b.match(/DTSTART[^:]*:(.*)/)?.[1]?.trim()||'';if(!sm||!dt)continue;const rw=dt.replace(/T.*/,'').replace(/-/g,'');if(rw.length===8)ev.push({id:uid(),title:sm,date:rw.slice(0,4)+'-'+rw.slice(4,6)+'-'+rw.slice(6,8)})}return ev}
+function exportData(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,2)],{type:'application/json'}));a.download='howieOS-'+new Date().toISOString().slice(0,10)+'.json';a.click()}
+function importData(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{S={...S,...JSON.parse(e.target.result)};save();renderDash();alert('Imported!')}catch{alert('Invalid JSON')}};r.readAsText(f)}
+function clearAll(){if(!confirm('Delete ALL data?'))return;localStorage.clear();S={todos:[],projects:[],courses:[],internships:[],reminders:DR,events:[],googleEvents:[],appleEvents:[],gOK:false,aOK:false};save();renderDash();renderBar()}
+function init(){
+  load();renderBar();renderDash();
+  const gci=localStorage.getItem('gci'),gak=localStorage.getItem('gak');
+  if(gci&&document.getElementById('gcid'))document.getElementById('gcid').value=gci;
+  if(gak&&document.getElementById('gapikey'))document.getElementById('gapikey').value=gak;
+  if(S.gOK){document.getElementById('gdot').classList.add('on');document.getElementById('glbl').textContent='Google · Connected'}
+  if(S.aOK){document.getElementById('adot').classList.add('on');document.getElementById('albl').textContent=`Apple · ${S.appleEvents.length} events`}
+  updBadge();
+}
+init();
 </script>
 </body>
 </html>
