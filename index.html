@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hou-Sheng SHEN — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #07070a;
+    --surface: #0f0f14;
+    --surface2: #17171e;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text: #f0ede8;
+    --muted: #6b6870;
+    --accent: #c8ff57;
+    --accent2: #57d9ff;
+    --accent3: #ff6b6b;
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CURSOR */
+  .cursor {
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease, background 0.2s;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(200,255,87,0.4);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.35s cubic-bezier(0.18,0.89,0.32,1.2), width 0.3s, height 0.3s, border-color 0.2s;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring.expand { width: 60px; height: 60px; border-color: rgba(200,255,87,0.7); }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.5rem 4rem;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  nav.scrolled { border-color: var(--border); background: rgba(7,7,10,0.85); backdrop-filter: blur(12px); }
+  .nav-logo { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; letter-spacing: -0.02em; color: var(--text); text-decoration: none; }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta {
+    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase;
+    background: var(--accent); color: #07070a; padding: 0.5rem 1.25rem; border-radius: 2px;
+    text-decoration: none; font-weight: 500; transition: opacity 0.2s;
+  }
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 4rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(200,255,87,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,255,87,0.03) 1px, transparent 1px);
+    background-size: 80px 80px;
+    pointer-events: none;
+  }
+  .hero-glow {
+    position: absolute; top: -30%; right: -10%;
+    width: 70vw; height: 70vw; max-width: 800px; max-height: 800px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,255,87,0.06) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .hero-tag::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent); }
+  .hero-name {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: clamp(4rem, 10vw, 9rem); line-height: 0.9;
+    letter-spacing: -0.03em; color: var(--text);
+    margin-bottom: 2rem;
+  }
+  .hero-name .outline { -webkit-text-stroke: 1px rgba(240,237,232,0.3); color: transparent; }
+  .hero-sub {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 2rem;
+  }
+  .hero-desc { font-size: 1.1rem; color: var(--muted); max-width: 520px; line-height: 1.7; }
+  .hero-desc strong { color: var(--text); font-weight: 400; }
+  .hero-stats { display: flex; gap: 3rem; }
+  .stat { text-align: right; }
+  .stat-num { font-family: var(--font-display); font-size: 2.5rem; font-weight: 800; color: var(--accent); line-height: 1; }
+  .stat-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+  .scroll-hint {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  }
+  .scroll-line { width: 1px; height: 40px; background: linear-gradient(var(--muted), transparent); animation: scrollDown 1.8s ease-in-out infinite; }
+  @keyframes scrollDown { 0%,100%{transform:scaleY(0);transform-origin:top} 50%{transform:scaleY(1);transform-origin:top} }
+
+  /* SECTION BASE */
+  section { padding: 7rem 4rem; }
+  .section-header { margin-bottom: 4rem; }
+  .section-num {
+    font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 0.95; letter-spacing: -0.03em;
+  }
+  .divider { width: 100%; height: 1px; background: var(--border); }
+
+  /* ABOUT */
+  #about { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+  .about-text p { font-size: 1.15rem; line-height: 1.8; color: rgba(240,237,232,0.7); margin-bottom: 1.5rem; }
+  .about-text p strong { color: var(--text); font-weight: 400; }
+  .about-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
+  .pill {
+    font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
+    border: 1px solid var(--border2); color: var(--muted); padding: 0.4rem 0.9rem; border-radius: 999px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .pill:hover { border-color: var(--accent); color: var(--accent); }
+  .about-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
+    padding: 2.5rem; position: relative; overflow: hidden;
+  }
+  .about-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); }
+  .lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .lang-item { }
+  .lang-name { font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; margin-bottom: 0.25rem; }
+  .lang-level { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .lang-bar-track { height: 2px; background: var(--border2); margin-top: 0.5rem; border-radius: 1px; overflow: hidden; }
+  .lang-bar { height: 100%; background: var(--accent); border-radius: 1px; transition: width 1s cubic-bezier(0.4,0,0.2,1); width: 0; }
+
+  /* EXPERIENCE */
+  #experience { background: var(--surface); }
+  .exp-list { display: flex; flex-direction: column; gap: 0; }
+  .exp-item {
+    display: grid; grid-template-columns: 180px 1fr;
+    gap: 3rem; padding: 3rem 0; border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
+    transition: background 0.3s;
+  }
+  .exp-item:last-child { border-bottom: none; }
+  .exp-item::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+    background: var(--accent); transform: scaleY(0); transform-origin: top;
+    transition: transform 0.4s ease;
+  }
+  .exp-item:hover::before { transform: scaleY(1); }
+  .exp-item:hover { background: rgba(200,255,87,0.02); }
+  .exp-left { }
+  .exp-date { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+  .exp-company { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; color: var(--accent); }
+  .exp-location { font-family: var(--font-mono); font-size: 0.65rem; color: var(--muted); margin-top: 0.25rem; }
+  .exp-right { }
+  .exp-title { font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+  .exp-type { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.25rem; }
+  .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+  .exp-bullets li { font-size: 0.95rem; color: rgba(240,237,232,0.65); line-height: 1.6; padding-left: 1.25rem; position: relative; }
+  .exp-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-size: 0.75rem; top: 3px; }
+  .exp-highlight { display: inline; background: rgba(200,255,87,0.1); color: var(--accent); padding: 1px 6px; border-radius: 2px; font-weight: 500; font-size: 0.9em; }
+
+  /* EDUCATION */
+  #education { }
+  .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .edu-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
+    padding: 2.5rem; position: relative; overflow: hidden; transition: border-color 0.3s;
+  }
+  .edu-card:hover { border-color: var(--border2); }
+  .edu-card.featured { border-color: rgba(200,255,87,0.3); }
+  .edu-card.featured::after { content: 'Current'; position: absolute; top: 1.5rem; right: 1.5rem; font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); background: rgba(200,255,87,0.1); padding: 0.25rem 0.6rem; border-radius: 2px; }
+  .edu-school { font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+  .edu-degree { font-size: 0.95rem; color: rgba(240,237,232,0.6); margin-bottom: 0.25rem; }
+  .edu-period { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.5rem; }
+  .edu-detail { font-size: 0.9rem; color: rgba(240,237,232,0.5); line-height: 1.6; }
+  .edu-gpa { font-family: var(--font-display); font-size: 3rem; font-weight: 800; color: var(--accent); line-height: 1; margin-top: 1.5rem; }
+  .edu-gpa-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+  /* SKILLS */
+  #skills { background: var(--surface); }
+  .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+  .skill-group { }
+  .skill-group-title {
+    font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);
+  }
+  .skill-items { display: flex; flex-direction: column; gap: 0.75rem; }
+  .skill-item { display: flex; align-items: center; justify-content: space-between; }
+  .skill-name { font-size: 0.95rem; color: rgba(240,237,232,0.8); }
+  .skill-dots { display: flex; gap: 4px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); }
+  .dot.filled { background: var(--accent); }
+  .cert-list { margin-top: 3rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .cert-item {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 4px;
+    padding: 1.25rem; transition: border-color 0.2s;
+  }
+  .cert-item:hover { border-color: var(--border2); }
+  .cert-issuer { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
+  .cert-name { font-size: 0.9rem; font-weight: 400; color: var(--text); line-height: 1.4; }
+  .cert-year { font-family: var(--font-mono); font-size: 0.65rem; color: var(--muted); margin-top: 0.4rem; }
+
+  /* CONTACT */
+  #contact { text-align: center; position: relative; overflow: hidden; }
+  .contact-glow { position: absolute; bottom: -40%; left: 50%; transform: translateX(-50%); width: 60vw; height: 60vw; max-width: 700px; max-height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(87,217,255,0.05) 0%, transparent 65%); pointer-events: none; }
+  .contact-big { font-family: var(--font-display); font-weight: 800; font-size: clamp(3rem, 8vw, 7rem); letter-spacing: -0.03em; line-height: 0.95; margin-bottom: 2rem; }
+  .contact-big span { color: var(--accent2); }
+  .contact-desc { font-size: 1.1rem; color: var(--muted); max-width: 480px; margin: 0 auto 3rem; }
+  .contact-links { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+  .contact-link {
+    display: flex; align-items: center; gap: 0.75rem;
+    font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.05em;
+    border: 1px solid var(--border2); color: var(--text); padding: 0.85rem 1.75rem; border-radius: 2px;
+    text-decoration: none; transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .contact-link:hover { border-color: var(--accent); color: var(--accent); }
+  .contact-link.primary { background: var(--accent); color: #07070a; border-color: var(--accent); }
+  .contact-link.primary:hover { background: transparent; color: var(--accent); }
+
+  /* FOOTER */
+  footer { padding: 2rem 4rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  footer p { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; color: var(--muted); }
+
+  /* ANIMATE */
+  .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .fade-up.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    nav { padding: 1.25rem 2rem; }
+    .nav-links { display: none; }
+    #hero { padding: 0 2rem 4rem; }
+    section { padding: 5rem 2rem; }
+    #about { grid-template-columns: 1fr; gap: 3rem; }
+    .edu-grid { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .cert-list { grid-template-columns: 1fr; }
+    .exp-item { grid-template-columns: 1fr; gap: 1rem; }
+    .hero-sub { flex-direction: column; align-items: flex-start; }
+    .hero-stats { gap: 2rem; }
+    footer { padding: 1.5rem 2rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav id="navbar">
+  <a class="nav-logo" href="#">HS<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a class="nav-cta" href="mailto:hou_sheng.shen@edu.escp.eu">Hire Me</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-tag">Available for opportunities</div>
+  <h1 class="hero-name">
+    Hou-Sheng<br>
+    <span class="outline">SHEN</span>
+  </h1>
+  <div class="hero-sub">
+    <p class="hero-desc">
+      <strong>BSc Management student at ESCP Paris.</strong><br>
+      Bridging analytical rigor with creative strategy — from AI model evaluation to retail operations. Based in Paris, rooted in Taiwan.
+    </p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">3.89</div>
+        <div class="stat-label">GPA</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Languages</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">3+</div>
+        <div class="stat-label">Certifications</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-text fade-up">
+    <div class="section-header">
+      <div class="section-num">01 — About</div>
+      <h2 class="section-title">Analytical.<br>Proactive.<br>Curious.</h2>
+    </div>
+    <p>I'm a <strong>BSc Management student at ESCP Business School in Paris</strong>, having transferred from Soochow University in Taipei after one year. My path sits at the intersection of business strategy, data, and technology.</p>
+    <p>At Outlier (Scale AI), I evaluate and optimize LLM outputs — working directly on AI alignment and dataset quality. Previously, I drove a <strong>15% YoY sales growth</strong> as the youngest intern supervisor at Far Eastern Department Stores.</p>
+    <p>I thrive in environments where precision meets creativity, and where cross-cultural fluency is an asset rather than just a line on a résumé.</p>
+    <div class="about-pills">
+      <span class="pill">AI Evaluation</span>
+      <span class="pill">Business Strategy</span>
+      <span class="pill">Data Analysis</span>
+      <span class="pill">Operations</span>
+      <span class="pill">Cross-Cultural</span>
+      <span class="pill">SQL / BigQuery</span>
+      <span class="pill">R Programming</span>
+    </div>
+  </div>
+  <div class="fade-up" style="animation-delay:0.15s">
+    <div class="about-card">
+      <div class="section-num" style="margin-bottom:1.5rem">Languages</div>
+      <div class="lang-grid">
+        <div class="lang-item">
+          <div class="lang-name">Mandarin</div>
+          <div class="lang-level">Native</div>
+          <div class="lang-bar-track"><div class="lang-bar" data-width="100%"></div></div>
+        </div>
+        <div class="lang-item">
+          <div class="lang-name">Taiwanese</div>
+          <div class="lang-level">Native</div>
+          <div class="lang-bar-track"><div class="lang-bar" data-width="100%"></div></div>
+        </div>
+        <div class="lang-item">
+          <div class="lang-name">English</div>
+          <div class="lang-level">C1 — Professional</div>
+          <div class="lang-bar-track"><div class="lang-bar" data-width="90%"></div></div>
+        </div>
+        <div class="lang-item">
+          <div class="lang-name">French</div>
+          <div class="lang-level">A2 — Elementary</div>
+          <div class="lang-bar-track"><div class="lang-bar" data-width="30%"></div></div>
+        </div>
+        <div class="lang-item">
+          <div class="lang-name">Italian</div>
+          <div class="lang-level">A1 — Beginner</div>
+          <div class="lang-bar-track"><div class="lang-bar" data-width="15%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-header fade-up">
+    <div class="section-num">02 — Experience</div>
+    <h2 class="section-title">Work &<br>Impact</h2>
+  </div>
+  <div class="exp-list">
+
+    <div class="exp-item fade-up">
+      <div class="exp-left">
+        <div class="exp-date">Jan 2025 — Present</div>
+        <div class="exp-company">Outlier</div>
+        <div class="exp-location">Remote · Freelance</div>
+      </div>
+      <div class="exp-right">
+        <div class="exp-title">AI Data Evaluation &<br>Quality Specialist</div>
+        <div class="exp-type">Scale AI, Inc.</div>
+        <ul class="exp-bullets">
+          <li>Evaluated and optimized LLM outputs to ensure alignment with safety, reasoning accuracy, and instruction-following standards — directly contributing to high-precision dataset refinement.</li>
+          <li>Facilitated contributor workshops and webinars to clarify project objectives and evaluation metrics for new contributors.</li>
+          <li>Collaborated with cross-functional quality teams to resolve ambiguous cases and perform detailed error analysis on systematic model issues.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="exp-item fade-up">
+      <div class="exp-left">
+        <div class="exp-date">Sep 2024 — Jun 2025</div>
+        <div class="exp-company">Soochow University</div>
+        <div class="exp-location">Taipei, Taiwan · Part-time</div>
+      </div>
+      <div class="exp-right">
+        <div class="exp-title">Teaching Assistant &<br>Mandarin Program Volunteer</div>
+        <div class="exp-type">Leadership & Involvement</div>
+        <ul class="exp-bullets">
+          <li>Improved international students' learning outcomes through structured tutoring, progress monitoring, and cross-cultural event planning.</li>
+          <li>Enhanced instructional efficiency by coordinating classroom operations and optimizing volunteer roles, significantly reducing faculty preparation time.</li>
+          <li>Designed and executed cultural and academic events, managing logistics and budgets for consistent student participation.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="exp-item fade-up">
+      <div class="exp-left">
+        <div class="exp-date">Jan 2023 — Aug 2023</div>
+        <div class="exp-company">Far Eastern Group</div>
+        <div class="exp-location">Hsinchu, Taiwan · Internship</div>
+      </div>
+      <div class="exp-right">
+        <div class="exp-title">Sales Operations &<br>Floor Supervisor — Intern</div>
+        <div class="exp-type">Far Eastern Department Stores Co., Ltd.</div>
+        <ul class="exp-bullets">
+          <li>Selected as the <span class="exp-highlight">youngest intern supervisor</span> — primary liaison between marketing, inventory, and operations teams.</li>
+          <li>Drove <span class="exp-highlight">15% YoY sales growth</span> during Mother's Day peak via a weekly yoga engagement series, increasing store visits by ~20% and visitor-to-buyer conversion by ~8%.</li>
+          <li>Leveraged sales data and behavioral insights to guide merchandising execution and optimize floor strategy.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-header fade-up">
+    <div class="section-num">03 — Education</div>
+    <h2 class="section-title">Academic<br>Journey</h2>
+  </div>
+  <div class="edu-grid">
+    <div class="edu-card featured fade-up">
+      <div class="edu-school">ESCP<br>Business School</div>
+      <div class="edu-degree">B.S. in Management</div>
+      <div class="edu-period">2025 — 2028 · Paris, France</div>
+      <div class="edu-detail">One of Europe's oldest and most prestigious business schools, with campuses across six cities. Rigorous international management programme combining strategy, finance, and entrepreneurship.</div>
+    </div>
+    <div class="edu-card fade-up" style="transition-delay:0.1s">
+      <div class="edu-school">Soochow<br>University</div>
+      <div class="edu-degree">B.B.A. in International Business & Trade</div>
+      <div class="edu-period">Aug 2024 — Jun 2025 · Taipei, Taiwan</div>
+      <div class="edu-detail">Transferred to ESCP after one year. Led workshops on English proficiency test preparation (GEPT, TOEIC, DET) and was active in cross-cultural academic initiatives.</div>
+      <div class="edu-gpa">3.89</div>
+      <div class="edu-gpa-label">Grade Point Average</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-header fade-up">
+    <div class="section-num">04 — Skills</div>
+    <h2 class="section-title">Tools &<br>Expertise</h2>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-group fade-up">
+      <div class="skill-group-title">Technical</div>
+      <div class="skill-items">
+        <div class="skill-item"><span class="skill-name">SQL / BigQuery</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+        <div class="skill-item"><span class="skill-name">R Programming</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div></div>
+        <div class="skill-item"><span class="skill-name">Microsoft Office 365</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+        <div class="skill-item"><span class="skill-name">Notion</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+        <div class="skill-item"><span class="skill-name">WordPress</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+        <div class="skill-item"><span class="skill-name">Canva</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+      </div>
+    </div>
+    <div class="skill-group fade-up" style="transition-delay:0.1s">
+      <div class="skill-group-title">Business</div>
+      <div class="skill-items">
+        <div class="skill-item"><span class="skill-name">AI Evaluation & Alignment</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+        <div class="skill-item"><span class="skill-name">Sales Operations</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+        <div class="skill-item"><span class="skill-name">Data Analysis</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+        <div class="skill-item"><span class="skill-name">Team Leadership</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+        <div class="skill-item"><span class="skill-name">SEO</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div></div>
+        <div class="skill-item"><span class="skill-name">Social Media Marketing</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div></div>
+      </div>
+    </div>
+    <div class="skill-group fade-up" style="transition-delay:0.2s">
+      <div class="skill-group-title">Soft Skills</div>
+      <div class="skill-items">
+        <div class="skill-item"><span class="skill-name">Cross-Cultural Communication</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+        <div class="skill-item"><span class="skill-name">Critical Thinking</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+        <div class="skill-item"><span class="skill-name">Workshop Facilitation</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+        <div class="skill-item"><span class="skill-name">Budget Management</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div></div>
+        <div class="skill-item"><span class="skill-name">Stakeholder Management</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cert-list fade-up">
+    <div class="cert-item">
+      <div class="cert-issuer">Google</div>
+      <div class="cert-name">SQL — Data with BigQuery</div>
+      <div class="cert-year">2026</div>
+    </div>
+    <div class="cert-item">
+      <div class="cert-issuer">IBM</div>
+      <div class="cert-name">Make Agentic AI Work for You</div>
+      <div class="cert-year">2025</div>
+    </div>
+    <div class="cert-item">
+      <div class="cert-issuer">Cambridge University</div>
+      <div class="cert-name">Cambridge C1 — CAE</div>
+      <div class="cert-year">2025</div>
+    </div>
+    <div class="cert-item">
+      <div class="cert-issuer">LinkedIn</div>
+      <div class="cert-name">Generative AI, Recruiting & Talent Acquisition</div>
+      <div class="cert-year">2026</div>
+    </div>
+    <div class="cert-item">
+      <div class="cert-issuer">ETS</div>
+      <div class="cert-name">TOEIC</div>
+      <div class="cert-year">2023</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-glow"></div>
+  <div class="contact-big fade-up">Let's<br><span>Connect</span></div>
+  <p class="contact-desc fade-up">Open to internships, part-time roles, and interesting conversations. Based in Paris — available globally.</p>
+  <div class="contact-links fade-up">
+    <a class="contact-link primary" href="mailto:hou_sheng.shen@edu.escp.eu">
+      ✉ hou_sheng.shen@edu.escp.eu
+    </a>
+    <a class="contact-link" href="https://www.linkedin.com/in/hou-sheng-shen-b60972392/" target="_blank">
+      ↗ LinkedIn
+    </a>
+    <a class="contact-link" href="tel:+33602772483">
+      ✆ +33 6 02 77 24 83
+    </a>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Hou-Sheng SHEN</p>
+  <p>BSc in Management · ESCP Business School · Paris</p>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx + 'px'; cursor.style.top = my + 'px'; });
+  (function animRing() { rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; requestAnimationFrame(animRing); })();
+  document.querySelectorAll('a, button, .pill, .exp-item, .edu-card, .cert-item').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('expand'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('expand'));
+  });
+
+  // Nav scroll
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 60); });
+
+  // Intersection observer fade-up
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+  // Language bars animate on visibility
+  const barObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.lang-bar').forEach(bar => { bar.style.width = bar.dataset.width; });
+        barObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.about-card').forEach(el => barObs.observe(el));
+</script>
+</body>
+</html>
